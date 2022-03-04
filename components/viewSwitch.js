@@ -8,17 +8,16 @@ export default function ViewSwitch({ onChange }) {
     onChange(e.currentTarget.value);
   };
   return (
-    <motion.div className="bg-slate-300 border-slate-300 border-2 border-solid mb-2 flex w-fit rounded-md">
+    <motion.div className="mb-4 max-w-xl flex rounded-md">
       <button
         onClick={handleChange}
         value="stacked"
-        className={`px-3 py-2 rounded flex align-center gap-1 ${
-          state === "stacked" ? "shadow" : ""
+        className={`w-full justify-center px-3 py-2 rounded flex align-center gap-1 ${
+          state === "stacked"
+            ? "shadow bg-gray-600 border border-gray-500"
+            : "bg-gray-800 border border-gray-800 text-gray-400"
         }`}
-        style={{
-          color: state === "stacked" ? "black" : "black",
-          background: state === "stacked" ? "white" : "transparent",
-        }}
+        style={{}}
       >
         <StackedIcon />
         Stacked
@@ -26,13 +25,12 @@ export default function ViewSwitch({ onChange }) {
       <button
         onClick={handleChange}
         value="overlay"
-        className={`px-3 py-2 rounded flex align-center gap-1 ${
-          state === "overlay" ? "shadow" : ""
+        className={`w-full justify-center px-3 py-2 rounded flex align-center gap-1 ${
+          state === "overlay"
+            ? "shadow bg-gray-600 border border-gray-500"
+            : "bg-gray-800 border border-gray-800 text-gray-400"
         }`}
-        style={{
-          color: state === "overlay" ? "black" : "black",
-          background: state === "overlay" ? "white" : "transparent",
-        }}
+        style={{}}
       >
         <OverlayIcon />
         Overlay

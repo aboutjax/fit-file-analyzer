@@ -31,10 +31,24 @@ var toHHMMSS = (secs) => {
 };
 
 const CustomTooltip = ({ active, payload, label }) => {
+  console.log(payload);
   let listItems = payload.map((item) => {
     if (item.name == "Altitude") {
       return (
-        <li key={item.name} style={{ listStyle: "none" }}>
+        <li
+          key={item.name}
+          style={{ listStyle: "none", display: "flex", alignItems: "center" }}
+        >
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              marginRight: 8,
+              display: "block",
+              backgroundColor: item.color,
+            }}
+          />
           {item.name}:{" "}
           <strong>
             {Math.round(item.value * 1000)} {item.unit || ""}
@@ -43,7 +57,20 @@ const CustomTooltip = ({ active, payload, label }) => {
       );
     } else {
       return (
-        <li key={item.name} style={{ listStyle: "none" }}>
+        <li
+          key={item.name}
+          style={{ listStyle: "none", display: "flex", alignItems: "center" }}
+        >
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              marginRight: 8,
+              display: "block",
+              backgroundColor: item.color,
+            }}
+          />
           {item.name}:{" "}
           <strong>
             {Math.round((item.value * 100) / 100)} {item.unit || ""}
@@ -52,15 +79,14 @@ const CustomTooltip = ({ active, payload, label }) => {
       );
     }
   });
-
   if (active && payload && payload.length) {
     let timerTime = payload[0].payload.elapsed_time;
     return (
-      <div className="p-4 bg-white rounded-md shadow-md border">
-        <span className="text-slate-600 text-xs mb-2 block">
+      <div className="p-4 bg-gray-700 rounded-md shadow-md border border-gray-600">
+        <span className="text-gray-200 text-xs mb-2 block">
           {toHHMMSS(timerTime)}
         </span>
-        <hr className="mb-1"></hr>
+        <hr className="mb-1 border-gray-500"></hr>
         {listItems}
       </div>
     );
@@ -164,9 +190,9 @@ const ChartCard = ({
     <motion.div
       variants={item}
       style={{ width: "100%", height: "300px" }}
-      className="bg-white p-6 rounded-md mb-2 border"
+      className="p-6 rounded-md mb-4 border border-gray-700 bg-gray-800"
     >
-      <h1 className="text-lg font-medium pb-4">{name}</h1>
+      <h1 className="text-xl font-semibold pb-4">{name}</h1>
       <ResponsiveContainer debounce={0.2} height={"100%"}>
         <ComposedChart
           syncId={"stacked"}
@@ -176,7 +202,8 @@ const ChartCard = ({
           <YAxis
             dataKey={datakey}
             domain={[0, "auto"]}
-            tickCount={5}
+            stroke={"#ccc"}
+            tickCount={3}
             axisLine={false}
             tickSize={0}
             unit={unit}
@@ -198,11 +225,15 @@ const ChartCard = ({
           />
 
           <Tooltip
-            cursor={{ stroke: "black" }}
+            cursor={{ stroke: "white" }}
             content={<CustomTooltip />}
             isAnimationActive={false}
           />
-          <CartesianGrid vertical={false} strokeDasharray="4" />
+          <CartesianGrid
+            vertical={false}
+            strokeDasharray="4"
+            strokeOpacity={0.3}
+          />
           <Line
             isAnimationActive={false}
             name={name}
@@ -221,7 +252,7 @@ const ChartCard = ({
             padding={{ left: 40 }}
             minTickGap={200}
             tickCount={4}
-            stroke={"#888"}
+            stroke={"#ccc"}
             tick={{ fontSize: 14 }}
             tickFormatter={(val) => {
               return toHHMMSS(val);
@@ -235,7 +266,7 @@ const ChartCard = ({
             isAnimationActive={false}
             dataKey="altitude"
             stroke={"none"}
-            fill={"rgba(0,0,0,0.2)"}
+            fill={"rgba(255, 255, 255, .6)"}
             dot={false}
             unit={"m"}
             activeDot={{ r: 4 }}

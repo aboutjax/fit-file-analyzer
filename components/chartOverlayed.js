@@ -31,10 +31,24 @@ var toHHMMSS = (secs) => {
 };
 
 const CustomTooltip = ({ active, payload, label }) => {
+  console.log(payload);
   let listItems = payload.map((item) => {
     if (item.name == "Altitude") {
       return (
-        <li key={item.name} style={{ listStyle: "none" }}>
+        <li
+          key={item.name}
+          style={{ listStyle: "none", display: "flex", alignItems: "center" }}
+        >
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              marginRight: 8,
+              display: "block",
+              backgroundColor: item.color,
+            }}
+          />
           {item.name}:{" "}
           <strong>
             {Math.round(item.value * 1000)} {item.unit || ""}
@@ -43,7 +57,20 @@ const CustomTooltip = ({ active, payload, label }) => {
       );
     } else {
       return (
-        <li key={item.name} style={{ listStyle: "none" }}>
+        <li
+          key={item.name}
+          style={{ listStyle: "none", display: "flex", alignItems: "center" }}
+        >
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              marginRight: 8,
+              display: "block",
+              backgroundColor: item.color,
+            }}
+          />
           {item.name}:{" "}
           <strong>
             {Math.round((item.value * 100) / 100)} {item.unit || ""}
@@ -55,11 +82,11 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     let timerTime = payload[0].payload.elapsed_time;
     return (
-      <div className="p-4 bg-white rounded-md shadow-md border">
-        <span className="text-slate-600 text-xs mb-2 block">
+      <div className="p-4 bg-gray-700 rounded-md shadow-md border border-gray-600">
+        <span className="text-gray-200 text-xs mb-2 block">
           {toHHMMSS(timerTime)}
         </span>
-        <hr className="mb-1"></hr>
+        <hr className="mb-1 border-gray-500"></hr>
         {listItems}
       </div>
     );
@@ -70,6 +97,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function ChartOverlayed({ data }) {
   const [resolution, setResolution] = React.useState(1000);
+
   let records = data.records;
 
   let uniqueKeys = Object.keys(
@@ -130,9 +158,12 @@ export default function ChartOverlayed({ data }) {
   };
 
   return (
-    <div
-      style={{ width: "100%", height: "400px" }}
-      className="bg-white p-6 pb-2 rounded-md border"
+    <motion.div
+      variants={container}
+      animate="show"
+      initial="hidden"
+      style={{ width: "100%", height: "600px" }}
+      className="p-6 rounded-md mb-4 border border-gray-700 bg-gray-800"
     >
       <ResponsiveContainer debounce={0.2} height={"100%"}>
         <ComposedChart data={simplified} margin={{ top: 0 }}>
@@ -141,6 +172,7 @@ export default function ChartOverlayed({ data }) {
             interval={"preserveEnd"}
             orientation={"bottom"}
             padding={{ left: 40 }}
+            stroke={"#CCC"}
             minTickGap={200}
             tickCount={4}
             tick={{ fontSize: 14 }}
@@ -148,12 +180,13 @@ export default function ChartOverlayed({ data }) {
               return toHHMMSS(val);
             }}
           />
-          <Legend verticalAlign="top" height={56} />
+          <Legend verticalAlign="top" height={80} align="left" />
           <YAxis
             dataKey={"power"}
             domain={[0, "auto"]}
             tickCount={5}
             axisLine={false}
+            stroke={"#CCC"}
             tickSize={0}
             unit=" W"
             mirror={true}
@@ -209,12 +242,16 @@ export default function ChartOverlayed({ data }) {
           />
 
           <Tooltip
-            cursor={{ stroke: "black" }}
+            cursor={{ stroke: "white" }}
             content={<CustomTooltip />}
             isAnimationActive={false}
             payload={[{ name: "power", unit: "W" }]}
           />
-          <CartesianGrid vertical={false} strokeDasharray="4" />
+          <CartesianGrid
+            vertical={false}
+            strokeDasharray="4"
+            strokeOpacity={0.3}
+          />
           <Line
             isAnimationActive={false}
             name="Power"
@@ -224,6 +261,7 @@ export default function ChartOverlayed({ data }) {
             unit={"W"}
             dot={false}
             activeDot={{ r: 4 }}
+            onMouseDown={(e) => console.log({ e })}
           />
           <Line
             isAnimationActive={false}
@@ -264,16 +302,17 @@ export default function ChartOverlayed({ data }) {
             name="Altitude"
             isAnimationActive={false}
             dataKey="altitude"
-            stroke={"none"}
-            fill={"rgba(0,0,0,0.2)"}
+            stroke={"#ccc"}
+            fill={"#ccc"}
             dot={false}
             unit={"m"}
             activeDot={{ r: 4 }}
             tickFormatter={(val) => val * 1000}
           />
           <Brush
-            style={{ borderColor: "red" }}
             alwaysShowText={false}
+            fill={"rgba(0, 0, 0, 1)"}
+            stroke={"#ccc"}
             travellerWidth={8}
             height={48}
             markerWidth={10}
@@ -288,7 +327,7 @@ export default function ChartOverlayed({ data }) {
                 isAnimationActive={false}
                 dataKey="altitude"
                 stroke={"none"}
-                fill={"rgba(0,0,0,0.2)"}
+                fill={"rgba(255, 255, 255, .6)"}
                 dot={false}
                 unit={"m"}
                 activeDot={{ r: 4 }}
@@ -297,6 +336,6 @@ export default function ChartOverlayed({ data }) {
           </Brush>
         </ComposedChart>
       </ResponsiveContainer>
-    </div>
+    </motion.div>
   );
 }
