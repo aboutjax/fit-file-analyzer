@@ -20,7 +20,7 @@ export default function ViewSwitch({ onChange }) {
         style={{}}
       >
         <StackedIcon />
-        Stacked
+        <span className="hidden sm:block">Stacked</span>
       </button>
       <button
         onClick={handleChange}
@@ -33,7 +33,7 @@ export default function ViewSwitch({ onChange }) {
         style={{}}
       >
         <OverlayIcon />
-        Overlay
+        <span className="hidden sm:block">Overlay</span>
       </button>
     </motion.div>
   );
