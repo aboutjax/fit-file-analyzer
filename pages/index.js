@@ -163,7 +163,7 @@ function LandingHeader() {
       <p className="text-xl font-regular text-white w-full mb-4">
         Turn FIT files into beautiful charts.
       </p>
-      <p className="text-sm font-regular text-orange-700 w-full p-2 bg-orange-100 px-3 rounded">
+      <p className="text-md font-regular text-orange-700 w-full p-2 bg-orange-100 px-3 rounded">
         Don&apos;t have FIT files? Try one of these:{" "}
         <a className="underline" href="./fit/indoor_cycling.fit" download>
           indoor_cycling.fit
