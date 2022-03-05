@@ -266,9 +266,8 @@ export default function ChartOverlayed({ data }) {
             alwaysShowText={false}
             fill={"rgba(0, 0, 0, 1)"}
             stroke={"#ccc"}
-            travellerWidth={8}
+            travellerWidth={24}
             height={48}
-            markerWidth={10}
             clip={true}
             tickFormatter={(val) => toHHMMSS(simplified[val].elapsed_time)}
           >
