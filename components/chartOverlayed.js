@@ -16,19 +16,8 @@ import {
 
 import { Tokens } from "../styles/tokens";
 import * as _ from "lodash";
-import { LTTB, createLTTB } from "downsample";
-
-var toHHMMSS = (secs) => {
-  var sec_num = parseInt(secs, 10);
-  var hours = Math.floor(sec_num / 3600);
-  var minutes = Math.floor(sec_num / 60) % 60;
-  var seconds = sec_num % 60;
-
-  return [hours, minutes, seconds]
-    .map((v) => (v < 10 ? "0" + v : v))
-    .filter((v, i) => v !== "00" || i > 0)
-    .join(":");
-};
+import { LTTB } from "downsample";
+import { toHHMMSS } from "../utils";
 
 const CustomTooltip = ({ active, payload, label }) => {
   console.log(payload);
@@ -106,49 +95,13 @@ export default function ChartOverlayed({ data }) {
     }, {})
   );
 
-  let handleBrushChange = (e) => {
-    console.log(e);
-    let delta = e.endIndex - e.startIndex;
-  };
-
   console.log(uniqueKeys);
 
-  // let streams = uniqueKeys.map((key) => {
-  //   let stream = _.map(records, key);
-  //   let replaceUndefinedWithZeroStream = stream.map((item) => {
-  //     if (item === undefined) {
-  //       return 0;
-  //     } else {
-  //       return item;
-  //     }
-  //   });
-  //   let originalStream = replaceUndefinedWithZeroStream.map((item, index) => {
-  //     return { x: records[index].elapsed_time, y: item };
-  //   });
-
-  //   let obj = {};
-  //   obj.key = key;
-  //   obj.stream = originalStream;
-
-  //   return obj;
-  // });
-
-  // let lowresStreams = streams.map((stream) => {
-  //   if (stream.key !== "timestamp") {
-  //     return { key: stream.key, stream: LTTB(stream.stream, 100) };
-  //   } else {
-  //     return [];
-  //   }
-  // });
-
-  // console.log("asdf", records);
-  let removeTimestamp = records.map((record) => {
-    delete record.timestamp;
-    delete record.left_right_balance;
+  let dataPrepForLTTB = records.map((record) => {
     return { x: record.elapsed_time, y: 0, ...record };
   });
 
-  let simplified = LTTB(removeTimestamp, resolution);
+  let simplified = LTTB(dataPrepForLTTB, resolution);
 
   console.log("simplified", simplified);
 
@@ -317,7 +270,6 @@ export default function ChartOverlayed({ data }) {
             height={48}
             markerWidth={10}
             clip={true}
-            onChange={handleBrushChange}
             tickFormatter={(val) => toHHMMSS(simplified[val].elapsed_time)}
           >
             <AreaChart data={data.records}>

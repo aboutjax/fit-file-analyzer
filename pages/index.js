@@ -4,22 +4,29 @@ import ViewSwitch from "../components/viewSwitch";
 import React, { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 var FitParser = require("fit-file-parser").default;
-const fileTypes = ["FIT"];
 import ChartOverlayed from "../components/chartOverlayed";
 import ChartStacked from "../components/chartStacked";
+
+// File dropper file extension config
+const fileTypes = ["FIT"];
 
 export default function Home() {
   const [data, setData] = React.useState(null);
 
+  // Handle dropzone change
   const handleChange = (data, file) => {
     setData({ fileName: file.name, data: data });
+
+    // Log the data for inspection
     console.log(data);
   };
 
+  // Reset data
   const startOver = () => {
     setData(null);
   };
 
+  // Framer motion variants for subtle animation
   const variants = {
     hidden: { opacity: 0, y: 24 },
     show: { opacity: 1, y: 0 },
@@ -39,43 +46,7 @@ export default function Home() {
         animate="show"
         className="mb-4 text-left flex items-start w-full flex-col sm:flex-row"
       >
-        {!data ? (
-          <div className="flex flex-col py-6">
-            <h1 className="text-5xl mb-1 font-bold tracking-tight w-full">
-              Fit File Viewer
-            </h1>
-            <p className="text-xl font-regular text-white w-full mb-4">
-              Turn FIT files into beautiful charts.
-            </p>
-            <p className="text-md font-regular text-cyan-700 w-full p-2 bg-cyan-100 px-3 border border-cyan-200 rounded">
-              Don&apos;t have FIT files? Try one of these:{" "}
-              <a className="underline" href="./fit/indoor_cycling.fit" download>
-                indoor_cycling.fit
-              </a>
-              ,{" "}
-              <a
-                className="underline"
-                href="./fit/outdoor_cycling.fit"
-                download
-              >
-                outdoor_cycling.fit
-              </a>
-            </p>
-            <div></div>
-          </div>
-        ) : (
-          <div className="flex flex-col w-full">
-            <h1 className="text-xl w-full font-semibold w-full">
-              {data?.fileName}
-            </h1>
-            <h1 className="text-sm font-regular text-white w-full text-gray-400">
-              {new Intl.DateTimeFormat("en-us", {
-                timeStyle: "long",
-                dateStyle: "short",
-              }).format(data?.data?.activity?.timestamp)}
-            </h1>
-          </div>
-        )}
+        {!data ? <LandingHeader /> : <DataHeader data={data} />}
       </motion.div>
 
       {data ? (
@@ -87,7 +58,6 @@ export default function Home() {
       ) : (
         <DragDrop onChange={handleChange} />
       )}
-      {/* {data && <ChartWrapper data={data.data} />} */}
     </div>
   );
 }
@@ -147,9 +117,6 @@ function DropZone({ isDragOver }) {
     <div
       className={`bgroup cursor-pointer text-white flex flex-col items-center justify-center p-12 border-dashed border-2 border-slate-300 rounded-md border h-full absolute w-full border-opacity-50`}
     >
-      {/* <div className={` mb-3  opacity-50 `}>
-        <Document />
-      </div> */}
       <h1 className={`text-lg text-center`}>
         Drag and drop a FIT file, or <span className="underline">browse</span>
       </h1>
@@ -186,23 +153,40 @@ function DroppedFile({ name, startOver, data }) {
   );
 }
 
-function ChartWrapper({ data }) {
-  const [stacked, setStacked] = React.useState(true);
-
-  let handleViewChange = (value) => {
-    setStacked(value === "stacked" ? true : false);
-  };
-
+function LandingHeader() {
   return (
-    <div className="w-full">
-      <button
-        onClick={startOver}
-        className="w-full sm:w-auto shrink-0 bg-gray-600 py-2 px-4 text-regular capitalize rounded text-white border border-gray-500"
-      >
-        Start over
-      </button>
-      <ViewSwitch onChange={handleViewChange} />
-      {stacked ? <ChartStacked data={data} /> : <ChartOverlayed data={data} />}
+    <div className="flex flex-col py-6">
+      <h1 className="text-5xl mb-1 font-bold tracking-tight w-full">
+        Fit File Viewer
+      </h1>
+      <p className="text-xl font-regular text-white w-full mb-4">
+        Turn FIT files into beautiful charts.
+      </p>
+      <p className="text-sm font-regular text-orange-700 w-full p-2 bg-orange-100 px-3 rounded">
+        Don&apos;t have FIT files? Try one of these:{" "}
+        <a className="underline" href="./fit/indoor_cycling.fit" download>
+          indoor_cycling.fit
+        </a>
+        ,{" "}
+        <a className="underline" href="./fit/outdoor_cycling.fit" download>
+          outdoor_cycling.fit
+        </a>
+      </p>
+      <div></div>
+    </div>
+  );
+}
+
+function DataHeader({ data }) {
+  return (
+    <div className="flex flex-col w-full">
+      <h1 className="text-xl w-full font-semibold w-full">{data?.fileName}</h1>
+      <h1 className="text-sm font-regular text-white w-full text-gray-400">
+        {new Intl.DateTimeFormat("en-us", {
+          timeStyle: "long",
+          dateStyle: "short",
+        }).format(data?.data?.activity?.timestamp)}
+      </h1>
     </div>
   );
 }

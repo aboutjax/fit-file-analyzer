@@ -2,33 +2,19 @@ import React from "react";
 import { motion } from "framer-motion";
 import {
   Line,
-  Brush,
   Area,
   XAxis,
-  AreaChart,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   ComposedChart,
-  CartesianAxis,
 } from "recharts";
 
 import { Tokens } from "../styles/tokens";
 import * as _ from "lodash";
 import { LTTB } from "downsample";
-
-var toHHMMSS = (secs) => {
-  var sec_num = parseInt(secs, 10);
-  var hours = Math.floor(sec_num / 3600);
-  var minutes = Math.floor(sec_num / 60) % 60;
-  var seconds = sec_num % 60;
-
-  return [hours, minutes, seconds]
-    .map((v) => (v < 10 ? "0" + v : v))
-    .filter((v, i) => v !== "00" || i > 0)
-    .join(":");
-};
+import { toHHMMSS } from "../utils";
 
 const CustomTooltip = ({ active, payload, label }) => {
   console.log(payload);
@@ -108,32 +94,11 @@ export default function ChartStacked({ data }) {
   const [brush, setBrush] = React.useState({ startIndex: 0, endIndex: 1000 });
   let records = data.records;
 
-  let uniqueKeys = Object.keys(
-    records.reduce(function (result, obj) {
-      return Object.assign(result, obj);
-    }, {})
-  );
-
-  // let handleBrushChange = (e) => {
-  //   console.log("asdf");
-  //   setBrush({ startIndex: e.startIndex, endIndex: e.endIndex });
-  // };
-
-  let handleBrushChange = React.useCallback(
-    (e) => {
-      console.log("asdf");
-      setBrush({ startIndex: e.startIndex, endIndex: e.endIndex });
-    },
-    [brush]
-  );
-
-  let removeTimestamp = records.map((record) => {
-    delete record.timestamp;
-    delete record.left_right_balance;
+  let dataPrepForLTTB = records.map((record) => {
     return { x: record.elapsed_time, y: 0, ...record };
   });
 
-  let simplified = LTTB(removeTimestamp, resolution);
+  let simplified = LTTB(dataPrepForLTTB, resolution);
 
   return (
     <motion.div variants={container} initial="hidden" animate="show">
