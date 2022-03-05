@@ -1,14 +1,12 @@
 import Head from "next/head";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import ViewSwitch from "../components/viewSwitch";
 import React, { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 var FitParser = require("fit-file-parser").default;
 const fileTypes = ["FIT"];
-import Document from "../components/icons/document";
 import ChartOverlayed from "../components/chartOverlayed";
 import ChartStacked from "../components/chartStacked";
-import simplify from "simplify-js";
 
 export default function Home() {
   const [data, setData] = React.useState(null);
@@ -41,30 +39,43 @@ export default function Home() {
         animate="show"
         className="mb-4 text-left flex items-start w-full flex-col sm:flex-row"
       >
-        <AnimatePresence>
-          {!data ? (
-            <motion.div className="flex flex-col py-6">
-              <h1 className="text-5xl mb-1 font-bold tracking-tight w-full">
-                Fit File Viewer
-              </h1>
-              <h1 className="text-lg font-regular text-white w-full">
-                Turn FIT files into beautiful charts.
-              </h1>
-            </motion.div>
-          ) : (
-            <motion.div className="flex flex-col w-full">
-              <h1 className="text-xl w-full font-semibold w-full">
-                {data?.fileName}
-              </h1>
-              <h1 className="text-sm font-regular text-white w-full text-gray-400">
-                {new Intl.DateTimeFormat("en-us", {
-                  timeStyle: "long",
-                  dateStyle: "short",
-                }).format(data?.data?.activity?.timestamp)}
-              </h1>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {!data ? (
+          <div className="flex flex-col py-6">
+            <h1 className="text-5xl mb-1 font-bold tracking-tight w-full">
+              Fit File Viewer
+            </h1>
+            <p className="text-xl font-regular text-white w-full mb-4">
+              Turn FIT files into beautiful charts.
+            </p>
+            <p className="text-md font-regular text-cyan-700 w-full p-2 bg-cyan-100 px-3 border border-cyan-200 rounded">
+              Don&apos;t have FIT files? Try one of these:{" "}
+              <a className="underline" href="./fit/indoor_cycling.fit" download>
+                indoor_cycling.fit
+              </a>
+              ,{" "}
+              <a
+                className="underline"
+                href="./fit/outdoor_cycling.fit"
+                download
+              >
+                outdoor_cycling.fit
+              </a>
+            </p>
+            <div></div>
+          </div>
+        ) : (
+          <div className="flex flex-col w-full">
+            <h1 className="text-xl w-full font-semibold w-full">
+              {data?.fileName}
+            </h1>
+            <h1 className="text-sm font-regular text-white w-full text-gray-400">
+              {new Intl.DateTimeFormat("en-us", {
+                timeStyle: "long",
+                dateStyle: "short",
+              }).format(data?.data?.activity?.timestamp)}
+            </h1>
+          </div>
+        )}
       </motion.div>
 
       {data ? (

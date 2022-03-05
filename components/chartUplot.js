@@ -5,6 +5,7 @@ import "uplot/dist/uPlot.min.css";
 const uPlot = dynamic(() => import("uplot"), {
   ssr: false,
 });
+
 const UplotReact = dynamic(() => import("uplot-react"), {
   ssr: false,
 });
