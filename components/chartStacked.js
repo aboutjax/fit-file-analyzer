@@ -94,7 +94,10 @@ export default function ChartStacked({ data }) {
   const [brush, setBrush] = React.useState({ startIndex: 0, endIndex: 1000 });
   let records = data.records;
 
+  // this is a workaround until I figure out how to use the advanced API from https://github.com/janjakubnanista/downsample#advanced-api
   let dataPrepForLTTB = records.map((record) => {
+    // In addition to the x and y keys (so LTTB func doesn't fail,
+    // also let it smooth out additional data points for this FIT file.
     return { x: record.elapsed_time, y: 0, ...record };
   });
 
