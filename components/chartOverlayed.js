@@ -89,6 +89,7 @@ export default function ChartOverlayed({ data }) {
 
   let records = data.records;
 
+  // Generate list of unique keys for this fit file
   let uniqueKeys = Object.keys(
     records.reduce(function (result, obj) {
       return Object.assign(result, obj);
@@ -97,7 +98,10 @@ export default function ChartOverlayed({ data }) {
 
   console.log(uniqueKeys);
 
+  // this is a workaround until I figure out how to use the advanced API from https://github.com/janjakubnanista/downsample#advanced-api
   let dataPrepForLTTB = records.map((record) => {
+    // In addition to the x and y keys (so LTTB func doesn't fail,
+    // also let it smooth out additional data points for this FIT file.
     return { x: record.elapsed_time, y: 0, ...record };
   });
 
