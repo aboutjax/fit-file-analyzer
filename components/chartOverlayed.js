@@ -20,7 +20,6 @@ import { LTTB } from "downsample";
 import { toHHMMSS } from "../utils";
 
 const CustomTooltip = ({ active, payload, label }) => {
-  console.log(payload);
   let listItems = payload.map((item) => {
     if (item.name == "Altitude") {
       return (
@@ -126,6 +125,7 @@ export default function ChartOverlayed({ data }) {
         <ComposedChart data={simplified} margin={{ top: 0 }}>
           <XAxis
             dataKey="elapsed_time"
+            allowDataOverflow={true}
             interval={"preserveEnd"}
             orientation={"bottom"}
             padding={{ left: 40 }}

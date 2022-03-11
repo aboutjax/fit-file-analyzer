@@ -14,10 +14,10 @@ import {
 import { Tokens } from "../styles/tokens";
 import * as _ from "lodash";
 import { LTTB } from "downsample";
-import { toHHMMSS } from "../utils";
+import { toHHMMSS, useWindowSize } from "../utils";
+import react from "react";
 
 const CustomTooltip = ({ active, payload, label }) => {
-  console.log(payload);
   let listItems = payload.map((item) => {
     if (item.name == "Altitude") {
       return (
@@ -89,10 +89,25 @@ const container = {
 const item = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } };
 
 export default function ChartStacked({ data }) {
-  const [resolution, setResolution] = React.useState(1000);
+  const size = useWindowSize();
+  const [resolution, setResolution] = React.useState(200);
   const [scale, setScale] = React.useState(1);
   const [brush, setBrush] = React.useState({ startIndex: 0, endIndex: 1000 });
+
   let records = data.records;
+
+  React.useEffect(() => {
+    if (size.width > 500) {
+      setResolution(500);
+    } else if (size.width > 1000) {
+      setResolution(1000);
+    } else if (size.width > 2000) {
+      setResolution(2000);
+    } else {
+      setResolution(200);
+    }
+    // if(size.width > )
+  }, [size]);
 
   // this is a workaround until I figure out how to use the advanced API from https://github.com/janjakubnanista/downsample#advanced-api
   let dataPrepForLTTB = records.map((record) => {
@@ -170,19 +185,27 @@ const ChartCard = ({
           <YAxis
             dataKey={datakey}
             domain={[0, "auto"]}
+            width={80}
             stroke={"#ccc"}
-            tickCount={3}
+            tickCount={4}
             axisLine={false}
             tickSize={0}
-            unit={unit}
             mirror={true}
-            verticalAnchor="end"
-            tick={{ fontSize: 14, dy: -10, dx: -2 }}
+            tick={{ fontSize: 14, dy: -12, dx: -2 }}
+            tickFormatter={(val, i) => {
+              if (val > 0 && i == 3) {
+                return `${val} ${unit}`;
+              } else if (val > 0) {
+                return `${val}`;
+              }
+
+              return "";
+            }}
           />
           <YAxis
             yAxisId="altitude"
             dataKey={"altitude"}
-            domain={[0, 1]}
+            domain={["auto", "dataMax"]}
             tickCount={5}
             axisLine={false}
             tickSize={0}
@@ -202,39 +225,59 @@ const ChartCard = ({
             strokeDasharray="4"
             strokeOpacity={0.3}
           />
-          <Line
+
+          <defs>
+            <linearGradient
+              id={`${color}_gradient`}
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="1"
+            >
+              <stop offset="20%" stopColor={color} stopOpacity={1} />
+              <stop offset="95%" stopColor={color} stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <Area
             isAnimationActive={false}
             name={name}
             type="monotone"
             dataKey={datakey}
             stroke={color}
+            fill={`url(#${color}_gradient)`}
             unit={unit}
+            strokeWidth={1}
             dot={false}
             activeDot={{ r: 4 }}
           />
 
           <XAxis
+            // type={"number"}
             dataKey="elapsed_time"
-            interval={"preserveEnd"}
-            orientation={"bottom"}
+            interval={"preserveStartEnd"}
+            // orientation={"bottom"}
             padding={{ left: 40 }}
             minTickGap={200}
-            tickCount={4}
-            stroke={"#ccc"}
-            tick={{ fontSize: 14 }}
+            tickCount={3}
+            // axisLine={false}
+            domain={[1000, "auto"]}
+            tick={{
+              fontSize: 14,
+              fill: "#CCC",
+              color: "#FFF",
+            }}
             tickFormatter={(val) => {
               return toHHMMSS(val);
             }}
           />
-
           <Area
-            type="linear"
+            // type="monotone"
             yAxisId="altitude"
             name="Altitude"
             isAnimationActive={false}
             dataKey="altitude"
-            stroke={"none"}
-            fill={"rgba(255, 255, 255, .6)"}
+            stroke={"rgba(255, 255, 255, .1)"}
+            fill={"rgba(255, 255, 255, .1)"}
             dot={false}
             unit={"m"}
             activeDot={{ r: 4 }}
